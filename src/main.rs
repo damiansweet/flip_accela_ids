@@ -18,10 +18,18 @@ struct Args {
 enum AppError {
     #[error("no results found")]
     NoResults,
-    #[error("network error")]
+    #[error("accela lib auth error")]
+    AccelaLibEnv(#[from] accela_lib::errors::MissingAccelaEnv),
+    #[error("accela lib auth error")]
+    AccelaLib(#[from] accela_lib::errors::AccelaError),
+    #[error("request error")]
     Network(#[from] reqwest::Error),
     #[error("more than 1 result")]
     TooManyResults,
+    #[error("more than 1 id arg provided")]
+    TooManyIds,
+    #[error("need a custom_id or record_id arg")]
+    NoIdArg,
     #[error("deserialization error")]
     Json(#[from] serde_json::Error),
 }
@@ -40,10 +48,10 @@ fn swap_ids(
     let custom_id = &args.custom_id;
 
     if record_id.is_some() && custom_id.is_some() {
-        panic!("only 1 id should be passed in! if you know both why are you running this");
+        return Err(AppError::TooManyIds);
     }
     if record_id.is_none() && custom_id.is_none() {
-        panic!("at least 1 id needs to be passed in");
+        return Err(AppError::NoIdArg);
     }
 
     let id_type = if record_id.is_some() {
@@ -98,7 +106,7 @@ fn swap_ids(
     }
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> Result<(), AppError> {
     let args = Args::parse();
 
     let auth_params = accela_lib::auth::build_accela_auth("records")?;
