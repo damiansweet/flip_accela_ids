@@ -109,11 +109,9 @@ fn swap_ids(
 fn main() -> Result<(), AppError> {
     let args = Args::parse();
 
-    let auth_params = accela_lib::auth::build_accela_auth("records")?;
-
     let client = reqwest::blocking::Client::new();
 
-    let access_token = accela_lib::fetch_accela_access_token_blocking(&client, auth_params)?;
+    let access_token = accela_lib::auth::fetch_accela_access_token_blocking(&client, "records")?;
 
     let id = swap_ids(&client, &access_token.access_token, &args)?;
     println!("{}", id);
