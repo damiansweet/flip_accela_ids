@@ -82,8 +82,8 @@ pub async fn swap_record_id_for_custom_id(
                 return Err(AppError::TooManyResults);
             }
 
-            let record_id = &resp.result[0].record_id.clone();
-            Ok(record_id.to_string())
+            let custom_id = &resp.result[0].custom_id.clone();
+            Ok(custom_id.to_string())
         }
 
         Err(e) => {
