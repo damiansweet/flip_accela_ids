@@ -1,7 +1,7 @@
 use accela_lib::models::{AccelaResp, Record};
 use clap::Parser;
+use flip_accela_ids::AppError;
 use serde_json::{Value, json};
-use thiserror::Error;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about=None)]
@@ -12,26 +12,6 @@ struct Args {
     /// Custom ID
     #[arg(short, long)]
     custom_id: Option<String>,
-}
-
-#[derive(Error, Debug)]
-enum AppError {
-    #[error("no results found")]
-    NoResults,
-    #[error("accela lib auth error")]
-    AccelaLibEnv(#[from] accela_lib::errors::MissingAccelaEnv),
-    #[error("accela lib auth error")]
-    AccelaLib(#[from] accela_lib::errors::AccelaError),
-    #[error("request error")]
-    Network(#[from] reqwest::Error),
-    #[error("more than 1 result")]
-    TooManyResults,
-    #[error("more than 1 id arg provided")]
-    TooManyIds,
-    #[error("need a custom_id or record_id arg")]
-    NoIdArg,
-    #[error("deserialization error")]
-    Json(#[from] serde_json::Error),
 }
 
 enum Id {
