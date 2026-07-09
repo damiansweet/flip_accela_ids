@@ -83,7 +83,7 @@ pub async fn swap_record_id_for_custom_id(
             }
 
             let custom_id = &resp.result[0].custom_id.clone();
-            Ok(custom_id.to_string())
+            Ok(custom_id.as_deref().unwrap_or_default().to_string())
         }
 
         Err(e) => {
