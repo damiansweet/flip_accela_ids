@@ -74,10 +74,10 @@ fn swap_ids(
 
             let result = match id_type {
                 Id::RecordId => &resp.result[0].custom_id,
-                Id::CustomId => &resp.result[0].record_id,
+                Id::CustomId => &Some(resp.result[0].record_id.to_string()),
             };
 
-            Ok(result.to_string())
+            Ok(result.as_deref().unwrap_or_default().to_string())
         }
         Err(e) => {
             eprintln!("raw resp: {}", serde_json::to_string_pretty(&resp_value)?);
